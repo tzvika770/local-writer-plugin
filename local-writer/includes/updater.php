@@ -44,12 +44,19 @@ function lw_fetch_update_manifest() {
 		return null;
 	}
 	// The package may ONLY come from the plugin's own public repo (releases assets).
-	if ( 0 !== strpos( (string) $manifest['package'], LW_UPDATE_REPO_PREFIX ) ) {
+	$package = (string) $manifest['package'];
+	if ( 0 !== strpos( $package, LW_UPDATE_REPO_PREFIX ) ) {
+		return null;
+	}
+	// Defense-in-depth (review finding): dot-segments / percent-encoding could smuggle a
+	// foreign path PAST the prefix check (…/local-writer-plugin/../evil/…); neither sequence
+	// can appear in a legitimate releases URL, so reject outright.
+	if ( false !== strpos( $package, '..' ) || false !== strpos( $package, '%' ) ) {
 		return null;
 	}
 	$manifest = array(
 		'version' => (string) $manifest['version'],
-		'package' => (string) $manifest['package'],
+		'package' => $package,
 	);
 	set_transient( LW_UPDATE_CACHE_KEY, $manifest, 6 * HOUR_IN_SECONDS );
 	return $manifest;

@@ -16,6 +16,10 @@ docstrings; this plugin is the PHP side that mirrors them.
 
 If no secret is configured, every API call is refused (403) and nothing is written.
 
+Note: from the settings screen the secret can be REPLACED but never read back or cleared
+(deliberate — an accidental save can't wipe or leak it). To remove it entirely, delete the
+`local_writer_hmac_secret` option or define the constant instead.
+
 ## Updates
 
 Standard one-click updates on the **Plugins** page. Releases are served from the public

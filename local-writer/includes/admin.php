@@ -45,7 +45,7 @@ function lw_admin_init() {
 	) );
 	register_setting( 'local_writer', 'local_writer_author_id', array(
 		'type'              => 'integer',
-		'sanitize_callback' => 'absint',
+		'sanitize_callback' => 'lw_sanitize_author',
 		'default'           => 0,
 	) );
 	register_setting( 'local_writer', 'local_writer_skew_seconds', array(
@@ -72,22 +72,45 @@ function lw_sanitize_secret( $value ) {
 
 /**
  * Allowlist sanitizer: keep a normalized comma-separated list of non-empty trimmed entries.
+ * When the field is LOCKED by a wp-config constant its disabled input submits nothing
+ * (options.php would write null) — keep the stored value instead of wiping it (review finding).
  *
  * @param string $value Submitted value.
  * @return string
  */
 function lw_sanitize_allowlist( $value ) {
+	if ( lw_config_is_constant( 'LOCAL_WRITER_IP_ALLOWLIST' ) ) {
+		return (string) get_option( 'local_writer_ip_allowlist', '' );
+	}
 	$parts = array_map( 'trim', explode( ',', (string) $value ) );
 	return implode( ',', array_values( array_filter( $parts, 'strlen' ) ) );
 }
 
 /**
- * Skew sanitizer: a positive integer, defaulting back to 300.
+ * Author sanitizer: a non-negative integer; constant-locked saves keep the stored value.
+ *
+ * @param mixed $value Submitted value.
+ * @return int
+ */
+function lw_sanitize_author( $value ) {
+	if ( lw_config_is_constant( 'LOCAL_WRITER_AUTHOR_ID' ) ) {
+		return (int) get_option( 'local_writer_author_id', 0 );
+	}
+	return absint( $value );
+}
+
+/**
+ * Skew sanitizer: a positive integer, defaulting back to 300; constant-locked saves keep the
+ * stored value.
  *
  * @param mixed $value Submitted value.
  * @return int
  */
 function lw_sanitize_skew( $value ) {
+	if ( lw_config_is_constant( 'LOCAL_WRITER_SKEW_SECONDS' ) ) {
+		$stored = (int) get_option( 'local_writer_skew_seconds', 300 );
+		return $stored > 0 ? $stored : 300;
+	}
 	$value = absint( $value );
 	return $value > 0 ? $value : 300;
 }
