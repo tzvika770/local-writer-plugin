@@ -1,0 +1,29 @@
+{
+  "_comment": "Golden vectors pinning the HMAC signing contract from src/local_writer/publisher.py. The secret is a FAKE test value (never a real key). The PHP plugin MUST reproduce signature from (secret,timestamp,nonce,body); the Python test (tests/test_wp_plugin_contract.py) asserts publisher.sign does too, so the two languages stay byte-compatible.",
+  "secret": "test-shared-secret-not-real",
+  "timestamp": "1717300000",
+  "nonce": "0123456789abcdef0123456789abcdef",
+  "body": "{\"content\": \"<h1>Drain Cleaning in Austin</h1>\\n<p>We offer fast drain cleaning. Call us!</p>\", \"focus_keyword\": \"drain cleaning austin\", \"jsonld\": {\"@context\": \"https://schema.org\", \"@type\": \"Article\", \"articleSection\": \"service\", \"headline\": \"Drain Cleaning Austin\", \"keywords\": \"drain cleaning austin\"}, \"page_type\": \"service\", \"status\": \"draft\", \"title\": \"Drain Cleaning Austin\"}",
+  "body_sha256": "3dc94242d6eb8a41521383ac93bad72cf15626d4ec1aa046e4fafcf74e83edda",
+  "canonical": "1717300000\n0123456789abcdef0123456789abcdef\n3dc94242d6eb8a41521383ac93bad72cf15626d4ec1aa046e4fafcf74e83edda",
+  "signature": "099b1dd3d3a0cfee43cc2c8e6f963400f507ede3333cc1d1a5b9b7ed889ca79c",
+  "_read_routes_comment": "h-wp-site-inventory-and-audit: the READ routes (inventory/page) ride the SAME canonical-string signing; bodies are the Python client's json.dumps(payload, sort_keys=True) bytes.",
+  "read_routes": {
+    "inventory": {
+      "timestamp": "1717300000",
+      "nonce": "fedcba9876543210fedcba9876543210",
+      "body": "{\"page\": 1, \"per_page\": 50, \"post_type\": \"page\", \"status\": \"publish\"}",
+      "body_sha256": "c3affd74ecb89a73f0201b56a06b9190e21cf9721885a679372d255b19306827",
+      "canonical": "1717300000\nfedcba9876543210fedcba9876543210\nc3affd74ecb89a73f0201b56a06b9190e21cf9721885a679372d255b19306827",
+      "signature": "c26d57fc470a82b4b97470e11c9835d65b36508797b109f134775e0cd0c0c592"
+    },
+    "page": {
+      "timestamp": "1717300000",
+      "nonce": "00112233445566770011223344556677",
+      "body": "{\"id\": 42}",
+      "body_sha256": "23d5479ba1b41412f1ca61194390157f97254b967a2edac8f0f72e50cdca59eb",
+      "canonical": "1717300000\n00112233445566770011223344556677\n23d5479ba1b41412f1ca61194390157f97254b967a2edac8f0f72e50cdca59eb",
+      "signature": "ebd54c442f6082a328d4c12f118e34ba85d463ffdb0844c0995d24e4984be380"
+    }
+  }
+}
