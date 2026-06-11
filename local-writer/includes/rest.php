@@ -251,6 +251,9 @@ function lw_handle_inventory( $request ) {
 	$status    = isset( $params['status'] ) ? sanitize_key( (string) $params['status'] ) : '';
 	$page      = isset( $params['page'] ) ? max( 1, (int) $params['page'] ) : 1;
 	$per_page  = isset( $params['per_page'] ) ? max( 1, min( 100, (int) $params['per_page'] ) ) : 100;
+	// LIGHT mode (m-site-inventory-filters): titles-only rows — no widget walk, no word count,
+	// no lw_* meta. Keeps listing a 500+ blog-post flood cheap (the MVP "know they exist" index).
+	$light = isset( $params['fields'] ) && 'light' === (string) $params['fields'];
 
 	$query = new WP_Query(
 		array(
@@ -265,17 +268,20 @@ function lw_handle_inventory( $request ) {
 
 	$rows = array();
 	foreach ( $query->posts as $post ) {
-		$rows[] = array(
-			'id'               => (int) $post->ID,
-			'title'            => $post->post_title,
-			'slug'             => $post->post_name,
-			'status'           => $post->post_status,
-			'modified'         => $post->post_modified,
-			'word_count'       => lw_word_count( $post->post_content ),
-			'lw_page_type'     => (string) get_post_meta( $post->ID, 'lw_page_type', true ),
-			'lw_focus_keyword' => (string) get_post_meta( $post->ID, 'lw_focus_keyword', true ),
-			'widgets'          => lw_widget_index( $post->ID ),
+		$row = array(
+			'id'       => (int) $post->ID,
+			'title'    => $post->post_title,
+			'slug'     => $post->post_name,
+			'status'   => $post->post_status,
+			'modified' => $post->post_modified,
 		);
+		if ( ! $light ) {
+			$row['word_count']       = lw_word_count( $post->post_content );
+			$row['lw_page_type']     = (string) get_post_meta( $post->ID, 'lw_page_type', true );
+			$row['lw_focus_keyword'] = (string) get_post_meta( $post->ID, 'lw_focus_keyword', true );
+			$row['widgets']          = lw_widget_index( $post->ID );
+		}
+		$rows[] = $row;
 	}
 	return new WP_REST_Response( $rows, 200 );
 }

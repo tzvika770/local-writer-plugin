@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Local Writer Receiver
  * Description:       Receives signed draft posts from the Local Writer client, serves the signed read routes (site inventory + page), and prints stored JSON-LD. Configure under Settings → Local Writer.
- * Version:           0.2.0
+ * Version:           0.2.1
  * Requires PHP:      7.4
  * Requires at least: 5.8
  * Author:            Local Writer
@@ -37,7 +37,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // No direct access.
 }
 
-define( 'LOCAL_WRITER_VERSION', '0.2.0' );
+define( 'LOCAL_WRITER_VERSION', '0.2.1' );
 define( 'LOCAL_WRITER_DIR', plugin_dir_path( __FILE__ ) );
 
 require_once LOCAL_WRITER_DIR . 'includes/config.php';
